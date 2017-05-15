@@ -5,6 +5,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { mainRoutes } from './main.routes';
 import { UserModule } from './user/user.module';
 import { HomeModule } from './home/home.module';
+import { UtilityService } from '../core/services/utility.service';
+import { AuthenService } from '../core/services/authen.service';
 
 @NgModule({
   imports: [
@@ -14,6 +16,7 @@ import { HomeModule } from './home/home.module';
     RouterModule.forChild(mainRoutes)
 
   ],
+  providers: [UtilityService, AuthenService],
   declarations: [MainComponent]
 })
 export class MainModule { }
