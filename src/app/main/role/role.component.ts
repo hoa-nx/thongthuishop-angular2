@@ -37,7 +37,9 @@ export class RoleComponent implements OnInit {
         this.totalRow = response.TotalRows;
       }, error => this._dataService.handleError(error));
   }
-
+  search(){
+    this.loadData();
+  }
   pageChanged(event: any): void {
     //console.log(event);
     this.pageIndex = event.page;

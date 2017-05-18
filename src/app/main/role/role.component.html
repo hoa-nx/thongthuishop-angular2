@@ -6,9 +6,9 @@
   <div class="title_right">
     <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
       <div class="input-group">
-        <input type="text" class="form-control" placeholder="Tên quyền...">
+        <input type="text" class="form-control" (keyup.enter)="search()" name="filter" [(ngModel)]="filter" placeholder="Tên quyền...">
         <span class="input-group-btn">
-                      <button class="btn btn-default" type="button">Tìm!</button>
+                      <button class="btn btn-default" (click)="search()" type="button">Tìm!</button>
                     </span>
       </div>
     </div>
