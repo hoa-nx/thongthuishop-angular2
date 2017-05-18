@@ -3,6 +3,7 @@ import { DataService } from '../../core/services/data.service';
 import { ModalDirective, ModalModule } from 'ngx-bootstrap/modal';
 import { NotificationService } from '../../core/services/notification.service';
 import { MessageContstants } from '../../core/common/message.constants';
+import { Response } from '@angular/http';
 
 @Component({
   selector: 'app-role',
@@ -48,7 +49,7 @@ export class RoleComponent implements OnInit {
     this.modalAddEdit.show();
   }
 
-  loadRole(id : any) {
+  loadRole(id: any) {
     this._dataService.get('/api/appRole/detail/' + id)
       .subscribe((response: any) => {
         this.entity = response;
@@ -58,6 +59,26 @@ export class RoleComponent implements OnInit {
   showEditModal(id: any) {
     this.loadRole(id);
     this.modalAddEdit.show();
+  }
+
+  deleteRole(id: any) {
+    this._notificationService.printConfirmationDialog(MessageContstants.CONFIRM_DELETE_MSG,()=>this.deleteRoleConfirm(id));
+    //or 
+    /*
+    this._notificationService.printConfirmationDialog(MessageContstants.CONFIRM_DELETE_MSG, () => {
+      this._dataService.delete('/api/appRole/delete', 'id', id).subscribe((response: Response) => {
+        this._notificationService.printSuccessMessage(MessageContstants.DELETED_OK_MSG);
+        this.loadData();
+      });
+    });
+    */
+  }
+
+  deleteRoleConfirm(id: any) {
+    this._dataService.delete('/api/appRole/delete', 'id', id).subscribe((response: Response) => {
+      this._notificationService.printSuccessMessage(MessageContstants.DELETED_OK_MSG);
+      this.loadData();
+    });
   }
 
   saveChange(valid: boolean) {
