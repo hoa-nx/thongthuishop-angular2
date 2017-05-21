@@ -4,6 +4,8 @@ import { ModalDirective, ModalModule } from 'ngx-bootstrap/modal';
 import { NotificationService } from '../../core/services/notification.service';
 import { MessageContstants } from '../../core/common/message.constants';
 import { Response } from '@angular/http';
+import { IMultiSelectOption } from 'angular-2-dropdown-multiselect';
+import { DaterangepickerConfig } from 'ng2-daterangepicker';
 
 @Component({
   selector: 'app-user',
@@ -16,6 +18,7 @@ export class UserComponent implements OnInit {
 
   constructor(private _dataService: DataService, private _notificationService: NotificationService) { }
 
+  public myRoles: string[] = [];
   public pageIndex: number = 1;
   public pageSize: number = 1;
   public pageDisplay: number = 10;
@@ -23,8 +26,16 @@ export class UserComponent implements OnInit {
   public users: any[];
   public totalRow: number;
   public entity: any;
+  public allRoles: IMultiSelectOption[] = [];
+  public roles: any[];
+  public dateOptions: any = {
+    locale: { format: 'DD/MM/YYYY' },
+    alwaysShowCalendars: false,
+    singleDatePicker: true
+  };
 
   ngOnInit() {
+    this.loadRoles();
     this.loadData();
   }
 
@@ -38,10 +49,20 @@ export class UserComponent implements OnInit {
       }, error => this._dataService.handleError(error));
   }
 
-  search(){
+  loadRoles() {
+    this._dataService.get('/api/appRole/getlistall')
+      .subscribe((response: any[]) => {
+        this.allRoles = [];
+        for (let role of response) {
+          this.allRoles.push({ id: role.Name, name: role.Description });
+        }
+      }, error => this._dataService.handleError(error));
+  }
+
+  search() {
     this.loadData();
   }
-  
+
   pageChanged(event: any): void {
     //console.log(event);
     this.pageIndex = event.page;
@@ -53,7 +74,7 @@ export class UserComponent implements OnInit {
     this.modalAddEdit.show();
   }
 
-  loadRole(id: any) {
+  loadUserDetail(id: any) {
     this._dataService.get('/api/appUser/detail/' + id)
       .subscribe((response: any) => {
         this.entity = response;
@@ -61,12 +82,12 @@ export class UserComponent implements OnInit {
   }
 
   showEditModal(id: any) {
-    this.loadRole(id);
+    this.loadUserDetail(id);
     this.modalAddEdit.show();
   }
 
-  deleteRole(id: any) {
-    this._notificationService.printConfirmationDialog(MessageContstants.CONFIRM_DELETE_MSG,()=>this.deleteRoleConfirm(id));
+  deleteUser(id: any) {
+    this._notificationService.printConfirmationDialog(MessageContstants.CONFIRM_DELETE_MSG, () => this.deleteUserConfirm(id));
     //or 
     /*
     this._notificationService.printConfirmationDialog(MessageContstants.CONFIRM_DELETE_MSG, () => {
@@ -78,7 +99,7 @@ export class UserComponent implements OnInit {
     */
   }
 
-  deleteRoleConfirm(id: any) {
+  deleteUserConfirm(id: any) {
     this._dataService.delete('/api/appUser/delete', 'id', id).subscribe((response: Response) => {
       this._notificationService.printSuccessMessage(MessageContstants.DELETED_OK_MSG);
       this.loadData();
@@ -104,5 +125,10 @@ export class UserComponent implements OnInit {
       }
     }
   }
+
+  public selectGender(event) {
+    this.entity.Gender = event.target.value;
+  }
+
 
 }
