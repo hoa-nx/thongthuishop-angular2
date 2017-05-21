@@ -64,7 +64,7 @@ export class UserComponent implements OnInit {
     }, error => this._dataService.handleError(error));
   }
   loadUserDetail(id: any) {
-    this.myRoles =[];//reset 
+    this.myRoles = [];//reset 
     this._dataService.get('/api/appUser/detail/' + id)
       .subscribe((response: any) => {
         this.entity = response;
@@ -134,6 +134,10 @@ export class UserComponent implements OnInit {
   }
   public selectGender(event) {
     this.entity.Gender = event.target.value
+  }
+
+  public selectedDate(value: any) {
+    this.entity.BirthDay = moment(new Date(value.end._d)).format('DD/MM/YYYY');
   }
 
 }
