@@ -17,7 +17,7 @@ export class RoleComponent implements OnInit {
   constructor(private _dataService: DataService, private _notificationService: NotificationService) { }
 
   public pageIndex: number = 1;
-  public pageSize: number = 1;
+  public pageSize: number = 20;
   public pageDisplay: number = 10;
   public filter: string = '';
   public roles: any[];

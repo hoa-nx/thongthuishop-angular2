@@ -54,8 +54,8 @@
               <td>{{role.Name}}</td>
               <td>{{role.Description}}</td>
               <td>
-                <button class="btn btn-primary" (click)="showEditModal(role.Id)"><i class="fa fa-pencil-square-o" ></i></button>
-                <button class="btn btn-danger" (click)="deleteRole(role.Id)"> <i class="fa fa-trash" ></i></button>
+                <button *ngIf="role.Name !='Admin'" class="btn btn-primary" (click)="showEditModal(role.Id)"><i class="fa fa-pencil-square-o" ></i></button>
+                <button *ngIf="role.Name !='Admin'" class="btn btn-danger" (click)="deleteRole(role.Id)"> <i class="fa fa-trash" ></i></button>
               </td>
             </tr>
 
@@ -84,7 +84,8 @@
         </button>
       </div>
       <div class="modal-body">
-        <form class="form-horizontal form-label-left" novalidate #addEditForm="ngForm" (ngSubmit)="saveChange(addEditForm.valid)" *ngIf="entity">
+        <form class="form-horizontal form-label-left" novalidate #addEditForm="ngForm" (ngSubmit)="saveChange(addEditForm.valid)"
+          *ngIf="entity">
           <div class="form-group">
             <label class="control-label col-md-3 col-sm-3 col-xs-12">Tên nhóm</label>
             <div class="col-md-9 col-sm-9 col-xs-12">
