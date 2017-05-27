@@ -1,14 +1,15 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { DataService } from '../../core/services/data.service';
-import { ModalDirective, ModalModule } from 'ngx-bootstrap/modal';
+import { ModalDirective } from 'ngx-bootstrap/modal';
 import { NotificationService } from '../../core/services/notification.service';
-import { MessageContstants } from '../../core/common/message.constants';
-import { Response } from '@angular/http';
-import { IMultiSelectOption } from 'angular-2-dropdown-multiselect';
-import { DaterangepickerConfig } from 'ng2-daterangepicker';
 import { UploadService } from '../../core/services/upload.service';
+import { AuthenService } from '../../core/services/authen.service';
+import { UtilityService } from '../../core/services/utility.service';
+
+import { MessageContstants } from '../../core/common/message.constants';
 import { SystemConstants } from '../../core/common/system.constants';
 
+import { IMultiSelectOption } from 'angular-2-dropdown-multiselect';
 declare var moment: any;
 
 @Component({
@@ -39,7 +40,14 @@ export class UserComponent implements OnInit {
   };
 
   constructor(private _dataService: DataService,
-    private _notificationService: NotificationService, private _uploadService: UploadService) { }
+    private _notificationService: NotificationService,
+    private _utilityService: UtilityService,
+    private _uploadService: UploadService, public _authenService: AuthenService) {
+
+    if (_authenService.checkAccess('USER') == false) {
+      _utilityService.navigateToLogin();
+    }
+  }
 
   ngOnInit() {
     this.loadRoles();
@@ -64,16 +72,16 @@ export class UserComponent implements OnInit {
     }, error => this._dataService.handleError(error));
   }
   loadUserDetail(id: any) {
-    this.myRoles = [];//reset 
     this._dataService.get('/api/appUser/detail/' + id)
       .subscribe((response: any) => {
         this.entity = response;
+        this.myRoles = [];
         for (let role of this.entity.Roles) {
           this.myRoles.push(role);
         }
         this.entity.BirthDay = moment(new Date(this.entity.BirthDay)).format('DD/MM/YYYY');
 
-        console.log(this.entity.BirthDay);
+        console.log(this.entity.Roles);
       });
   }
   pageChanged(event: any): void {
@@ -84,10 +92,12 @@ export class UserComponent implements OnInit {
     this.entity = {};
     this.modalAddEdit.show();
   }
+  
   showEditModal(id: any) {
     this.loadUserDetail(id);
     this.modalAddEdit.show();
   }
+
   saveChange(valid: boolean) {
     if (valid) {
       this.entity.Roles = this.myRoles;
@@ -105,6 +115,7 @@ export class UserComponent implements OnInit {
       }
     }
   }
+
   private saveData() {
     if (this.entity.Id == undefined) {
       this._dataService.post('/api/appUser/add', JSON.stringify(this.entity))
@@ -123,9 +134,11 @@ export class UserComponent implements OnInit {
         }, error => this._dataService.handleError(error));
     }
   }
+
   deleteItem(id: any) {
     this._notificationService.printConfirmationDialog(MessageContstants.CONFIRM_DELETE_MSG, () => this.deleteItemConfirm(id));
   }
+
   deleteItemConfirm(id: any) {
     this._dataService.delete('/api/appUser/delete', 'id', id).subscribe((response: Response) => {
       this._notificationService.printSuccessMessage(MessageContstants.DELETED_OK_MSG);
@@ -137,7 +150,11 @@ export class UserComponent implements OnInit {
   }
 
   public selectedDate(value: any) {
-    this.entity.BirthDay = moment(new Date(value.end._d)).format('DD/MM/YYYY');
+    this.entity.BirthDay = moment(value.end._d).format('DD/MM/YYYY');
   }
+
+  public onChange(): void {
+      console.log(this.myRoles);
+   }
 
 }
