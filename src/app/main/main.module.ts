@@ -7,6 +7,8 @@ import { UserModule } from './user/user.module';
 import { HomeModule } from './home/home.module';
 import { UtilityService } from '../core/services/utility.service';
 import { AuthenService } from '../core/services/authen.service';
+import { SidebarMenuComponent } from '../shared/sidebar-menu/sidebar-menu.component';
+import { TopMenuComponent } from '../shared/top-menu/top-menu.component';
 
 @NgModule({
   imports: [
@@ -17,6 +19,6 @@ import { AuthenService } from '../core/services/authen.service';
 
   ],
   providers: [UtilityService, AuthenService],
-  declarations: [MainComponent]
+  declarations: [MainComponent, SidebarMenuComponent, TopMenuComponent]
 })
 export class MainModule { }
